@@ -10,7 +10,7 @@ const D20_FUMBLE := 1  # натуральная 1 — промах/невезе�
 
 var state: State = State.EXPLORE
 var player := Player.new()
-var enemy: Enemy
+var enemy: RefCounted  # Enemy (см. scripts/enemy.gd)
 var depth := 1              # «глубина подземелья», растёт с победой
 var combat_turn := "player"
 var shield_value := 0       # временный щит от действия «Защититься» (сбрасывается в конце хода)

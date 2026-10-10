@@ -20,8 +20,8 @@ var hp: int = 50
 var strength: int = 5      # влияет на урон (плюс к броску) и HP при повышении уровня
 var agility: int = 5       # влияет на уворот
 
-var weapon: Weapon
-var armor: Armor
+var weapon: Resource  # Weapon (см. scripts/weapon.gd)
+var armor: Resource  # Armor (см. scripts/armor.gd)
 
 
 func _init() -> void:
@@ -88,7 +88,7 @@ class WeaponsDB:
 
 	static func random_for_level(depth: int) -> Weapon:
 		var pool := [dagger(), sword(), axe(), greatsword()]
-		var w: Weapon = pool.pick_random()
+		var w: Resource = pool.pick_random()
 		# с глубиной подкручиваем диапазон вверх
 		w.dmg_min += depth
 		w.dmg_max += depth + randi_range(0, 3)
@@ -112,7 +112,7 @@ class ArmorsDB:
 		return _a("Латы", 8, 15, 200)
 
 	static func random_for_level(depth: int) -> Armor:
-		var a: Armor = [leather(), chain(), plate()].pick_random()
+		var a: Resource = [leather(), chain(), plate()].pick_random()
 		a.block_min += depth
 		a.block_max += depth + randi_range(0, 3)
 		return a
