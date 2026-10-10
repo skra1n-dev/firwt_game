@@ -1,13 +1,20 @@
 extends SceneTree
 ## Автотест: прогоняем ключевые механики без GUI (headless).
 ## Запуск: godot --headless --path . -s res://tests/test_run.gd
+## Явные preload нужны, потому что в режиме --script классы (class_name)
+## ещё не зарегистрированы в глобальном реестре ProjectMain.
+
+const WeaponClass := preload("res://scripts/weapon.gd")
+const ArmorClass := preload("res://scripts/armor.gd")
+const PlayerClass := preload("res://scripts/player.gd")
+const EnemyClass := preload("res://scripts/enemy.gd")
 
 func _init() -> void:
 	var fails := 0
 
 	# 1) Оружие: урон всегда в диапазоне
 	for i in 200:
-		var w := Weapon.new()
+		var w := WeaponClass.new()
 		w.dmg_min = 10; w.dmg_max = 20
 		var d := w.roll_damage()
 		if d < 10 or d > 20:
@@ -16,7 +23,7 @@ func _init() -> void:
 
 	# 2) Броня: блок всегда в диапазоне
 	for i in 200:
-		var a := Armor.new()
+		var a := ArmorClass.new()
 		a.block_min = 5; a.block_max = 10
 		var b := a.roll_block()
 		if b < 5 or b > 10:
@@ -24,7 +31,7 @@ func _init() -> void:
 	print("Armor block range: OK")
 
 	# 3) Игрок: уворот = ловкость * коэффициент
-	var p := Player.new()
+	var p := PlayerClass.new()
 	p.agility = 10
 	var dodges := 0
 	for i in 1000:
@@ -51,7 +58,7 @@ func _init() -> void:
 		print("Level up works: lvl ", p.level, " STR ", p.strength, " AGI ", p.agility)
 
 	# 5) Враги: генерация и симуляция полного боя
-	var e := Enemy.make_random(1)
+	var e := EnemyClass.make_random(1)
 	if e.hp <= 0 or e.dmg_min > e.dmg_max:
 		print("FAIL enemy gen"); fails += 1
 	else:
@@ -66,7 +73,7 @@ func _init() -> void:
 			p.hp = maxi(0, p.hp - (raw - blocked))
 		e.hp = maxi(0, e.hp - p.attack()["dmg"])
 		if e.hp == 0:
-			e = Enemy.make_random(guard / 50 + 1)
+			e = EnemyClass.make_random(guard / 50 + 1)
 	print("Combat loop simulated %d rounds without crash" % guard)
 
 	if fails == 0:
